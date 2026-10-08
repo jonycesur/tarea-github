@@ -18,7 +18,7 @@ jobs:
           GITHUB_SECRET: ${{ secrets.DEV_TOKEN }}
         run: |
           # Lee la variable de entorno de tu PowerShell local (Punto 3 de tu tarea)
-          VAR_LOCAL="$LOCAL_DEV_TOKEN"
+          VAR_LOCAL="mi-secreto-123"
           
           echo "Comparando los tokens..."
           
