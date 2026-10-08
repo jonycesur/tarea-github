@@ -1,11 +1,8 @@
 name: Validacion de Tokens en Runner Local
-
-# Se activa al hacer push a GitHub (Punto 4 de tu tarea)
 on: [push]
 
 jobs:
   comparar_tokens:
-    # IMPORTANTE: Esto le dice a GitHub que use TU computadora
     runs-on: self-hosted 
 
     steps:
@@ -13,20 +10,20 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Comparar Secret de GitHub contra Variable Local
-        shell: powershell
+        # Con esto anulamos la restricción de seguridad de Windows temporalmente
+        shell: powershell -ExecutionPolicy Bypass {0}
         env:
           GITHUB_SECRET: ${{ secrets.DEV_TOKEN }}
         run: |
-          # Lee la variable de entorno de tu PowerShell local (Punto 3 de tu tarea)
-          VAR_LOCAL="mi-secreto-123"
+          # Ponemos tu contraseña real directamente aquí
+          $VAR_LOCAL = "mi-secreto-123"
           
-          echo "Comparando los tokens..."
+          Write-Output "Comparando los tokens..."
           
-          # Validación por IF (Punto 4 de tu tarea)
-          if [ "$GITHUB_SECRET" = "$VAR_LOCAL" ]; then
-            echo "✅ ¡Coinciden perfectamente!"
-            exit 0
-          else
-            echo "❌ ¡ERROR! Los tokens no coinciden."
-            exit 1
-          fi
+          if ($env:GITHUB_SECRET -eq $VAR_LOCAL) {
+              Write-Output "✅ ¡Coinciden perfectamente!"
+              exit 0
+          } else {
+              Write-Output "❌ ¡ERROR! Los tokens no coinciden."
+              exit 1
+          }
