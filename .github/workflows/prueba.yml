@@ -16,7 +16,7 @@ jobs:
           GITHUB_SECRET: ${{ secrets.DEV_TOKEN }}
         run: |
           # Ponemos tu contraseña real directamente aquí
-          $VAR_LOCAL = "mi-secreto-123"
+          $VAR_LOCAL = "mi-secreto-12345"
           
           Write-Output "Comparando los tokens..."
           
