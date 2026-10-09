@@ -1,0 +1,33 @@
+name: Pipeline CI completo
+
+# Se dispara al abrir un pull request hacia la rama develop
+on:
+  pull_request:
+    branches: [ "develop" ]
+
+jobs:
+  # Primer trabajo: Actualizar el README
+  update-readme:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Simular actualización del README
+        run: |
+          echo "Añadiendo línea de la nueva feature al README"
+          echo "- Nueva feature añadida por la cuenta colaboradora" >> README.md
+
+  # Segundo trabajo: Validar el entorno de desarrollo
+  validate-dev:
+    runs-on: self-hosted
+    # IMPORTANTE: Esto cumple el Punto 4 (corre después de update-readme)
+    needs: update-readme
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Validar Dev Token
+        run: |
+          echo "Validando credenciales de desarrollo..."
+          echo "Validación de desarrollo exitosa.

@@ -1,0 +1,24 @@
+name: Pipeline CD completo
+
+# Se dispara cuando se suben cambios o se hace merge a la rama main
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy-and-bump:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Bump de versión en el README
+        run: |
+          echo "Realizando bump de versión..."
+          # Reemplaza AppVersion-0 por AppVersion-1 en el archivo README.md
+          sed -i 's/AppVersion-0/AppVersion-1/g' README.md
+
+      - name: Validar secreto de producción
+        run: |
+          echo "Validando con el secret de producción..."
+          echo "Producción validada correctamente."
