@@ -1,0 +1,43 @@
+name: CD Workflow
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+  workflow_dispatch:
+
+jobs:
+  update-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Bump Version in README
+        run: |
+          # Incrementa la versión y añade fecha y hora
+          current_version=$(grep -oE 'AppVersion-[0-9]+' README.md | tail -n 1)
+          num=$(echo $current_version | cut -d'-' -f2)
+          next_num=$((num + 1))
+          timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+          
+          echo "AppVersion-$next_num ($timestamp)" >> README.md
+          
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "Bump version to AppVersion-$next_num"
+          git push
+
+  validate-prod:
+    needs: update-version
+    runs-on: self-hosted
+    steps:
+      - name: Validate PROD Token
+        run: |
+          if [ "$LOCAL_PROD_TOKEN" = "$PROD_TOKEN" ]; then
+            echo "Token de producción válido"
+          else
+            echo "Token de producción inválido"
+            exit 1
+          fi
