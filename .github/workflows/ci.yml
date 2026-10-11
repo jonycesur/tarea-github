@@ -1,0 +1,36 @@
+name: CI Workflow
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+  workflow_dispatch:
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Update README
+        run: |
+          echo "Añadida feature: ${{ github.head_ref || github.ref_name }}" >> README.md
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "Actualizar README con nueva feature"
+          git push
+
+  validate-dev:
+    needs: update-readme
+    runs-on: self-hosted
+    steps:
+      - name: Validate DEV Token
+        run: |
+          if [ "$LOCAL_DEV_TOKEN" = "$DEV_TOKEN" ]; then
+            echo "Token válido"
+          else
+            echo "Token inválido"
+            exit 1
+          fi
